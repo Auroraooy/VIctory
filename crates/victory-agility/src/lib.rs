@@ -169,12 +169,10 @@ fn resolve_get_interface() -> Result<D3D12GetInterfaceFn, String> {
         return Err("failed to load d3d12.dll".into());
     }
     // SAFETY: `GetProcAddress` returns a valid function or null.
-    let symbol = unsafe { GetProcAddress(module, c"D3D12GetInterface".as_ptr().cast()) }
+    let symbol = unsafe { GetProcAddress(module, b"D3D12GetInterface\0".as_ptr()) }
         .ok_or("D3D12GetInterface unavailable (update Windows 10 to 22H2 KB5029331+)")?;
     // SAFETY: the Win32 export has this calling convention/signature.
-    Ok(unsafe {
-        std::mem::transmute::<unsafe extern "system" fn() -> isize, D3D12GetInterfaceFn>(symbol)
-    })
+    Ok(unsafe { std::mem::transmute::<_, D3D12GetInterfaceFn>(symbol) })
 }
 
 fn create_factory(version: u32, dir: &Path, path: &CStr) -> Result<ID3D12DeviceFactory, String> {

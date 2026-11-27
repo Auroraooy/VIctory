@@ -177,13 +177,13 @@ fn create() -> windows::core::Result<Host> {
         }
         // Diagnostics: device-removed data (the command that faulted, the
         // faulting address), read when the device is removed.
-        if dred_on() {
-            if let Ok(dred) = victory_agility::configuration_interface::<ID3D12DeviceRemovedExtendedDataSettings>(
+        if dred_on()
+            && let Ok(dred) = victory_agility::configuration_interface::<ID3D12DeviceRemovedExtendedDataSettings>(
                 &CLSID_D3D12DeviceRemovedExtendedData,
-            ) {
-                dred.SetAutoBreadcrumbsEnablement(D3D12_DRED_ENABLEMENT_FORCED_ON);
-                dred.SetPageFaultEnablement(D3D12_DRED_ENABLEMENT_FORCED_ON);
-            }
+            )
+        {
+            dred.SetAutoBreadcrumbsEnablement(D3D12_DRED_ENABLEMENT_FORCED_ON);
+            dred.SetPageFaultEnablement(D3D12_DRED_ENABLEMENT_FORCED_ON);
         }
         // Diagnostics: the software adapter, on which a shader's wild access
         // is an access violation in this process (a crash report with the
